@@ -243,20 +243,25 @@
     }
 
     // Event listeners
+    // Close modal when the "X" button is clicked
     closeBtn.addEventListener("click", closeModal);
+
+    // Close modal when clicking outside the modal content (on the overlay)
     overlay.addEventListener("click", function (e) {
       if (e.target === overlay) closeModal();
     });
+
+    // Close modal when pressing the Escape key
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && overlay.style.display === "block") {
         closeModal();
       }
     });
+
+    // Open modal when clicking any <a> or <button> with text "Ask our AI"
     document.addEventListener("click", function (e) {
-      if (
-        e.target.getAttribute("data-ella") === "open" ||
-        e.target.closest('[data-ella="open"]')
-      ) {
+      const target = e.target.closest("a, button");
+      if (target && target.textContent.trim().toLowerCase() === "ask our ai") {
         e.preventDefault();
         openModal();
       }
