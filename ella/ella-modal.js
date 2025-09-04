@@ -42,11 +42,13 @@
       .ella-modal {
         inset: 0;
         width: 100vw; 
-        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height - accounts for browser UI */
+        min-height: 100vh; /* Fallback for older browsers */
         border-radius: 0;
         transform: none;
         top: 0;
         left: 0;
+        padding-bottom: env(safe-area-inset-bottom, 0px); /* iOS safe area */
       }
     }
     .ella-iframe {
