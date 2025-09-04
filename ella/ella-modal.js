@@ -190,20 +190,18 @@
     document.body.appendChild(modal);
 
     // Adjust modal height dynamically using visualViewport API (iOS Safari/Chrome fix)
-    if (window.visualViewport) {
+    if (window.innerHeight) {
       function adjustModalHeight() {
         // Only apply on mobile widths
         if (window.innerWidth <= 767) {
-          const h =
-            window.visualViewport.height + window.visualViewport.offsetTop;
-          modal.style.height = h + "px";
+          modal.style.height = window.innerHeight + "px";
         } else {
-          modal.style.height = ""; // reset, let desktop CSS handle it
+          modal.style.removeProperty("height"); // reset, let desktop CSS handle it
         }
       }
       adjustModalHeight(); // run once
-      window.visualViewport.addEventListener("resize", adjustModalHeight);
-      window.visualViewport.addEventListener("scroll", adjustModalHeight);
+      window.addEventListener("resize", adjustModalHeight);
+      window.addEventListener("orientationchange", adjustModalHeight);
     }
 
     // Open modal when triggered
