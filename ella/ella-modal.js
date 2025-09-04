@@ -189,6 +189,16 @@
     document.body.appendChild(overlay);
     document.body.appendChild(modal);
 
+    // Adjust modal height dynamically using visualViewport API (iOS Safari/Chrome fix)
+    if (window.visualViewport) {
+      function adjustModalHeight() {
+        modal.style.height = window.visualViewport.height + "px";
+      }
+      adjustModalHeight(); // run once
+      window.visualViewport.addEventListener("resize", adjustModalHeight);
+      window.visualViewport.addEventListener("scroll", adjustModalHeight);
+    }
+
     // Open modal when triggered
     function openModal() {
       overlay.style.display = "block";
@@ -229,6 +239,7 @@
       overlay.style.display = "none";
       modal.style.display = "none";
       document.body.style.overflow = "";
+      modal.style.height = ""; // Reset height so CSS takes over on next open
     }
 
     // Reload iframe after error
