@@ -41,14 +41,24 @@
     @media(max-width:767px){
       .ella-modal {
         inset: 0;
-        width: 100vw; 
-        height: 100dvh; /* Dynamic viewport height - accounts for browser UI */
-        min-height: 100vh; /* Fallback for older browsers */
+        width: 100vw;
+        height: calc(var(--vh, 1vh) * 100); /* fallback driven by JS */
         border-radius: 0;
         transform: none;
         top: 0;
         left: 0;
-        padding-bottom: env(safe-area-inset-bottom, 0px); /* iOS safe area */
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+    }
+    /* Prefer modern viewport units when supported */
+    @supports (height: 100dvh){
+      @media(max-width:767px){
+        .ella-modal { height: 100dvh; }
+      }
+    }
+    @supports (height: 100svh){
+      @media(max-width:767px){
+        .ella-modal { height: 100svh; } /* best on iOS 16.4+ */
       }
     }
     .ella-iframe {
@@ -190,18 +200,23 @@
     document.body.appendChild(modal);
 
     // Adjust modal height dynamically using visualViewport API (iOS Safari/Chrome fix)
-    if (window.innerHeight) {
-      function adjustModalHeight() {
-        // Only apply on mobile widths
-        if (window.innerWidth <= 767) {
-          modal.style.height = window.innerHeight + "px";
-        } else {
-          modal.style.removeProperty("height"); // reset, let desktop CSS handle it
-        }
+    function setVH() {
+      if (window.innerWidth <= 767) {
+        document.documentElement.style.setProperty(
+          "--vh",
+          window.innerHeight * 0.01 + "px"
+        );
+      } else {
+        document.documentElement.style.removeProperty("--vh");
+        modal.style.removeProperty("height"); // ensure desktop CSS rules apply
       }
-      adjustModalHeight(); // run once
-      window.addEventListener("resize", adjustModalHeight);
-      window.addEventListener("orientationchange", adjustModalHeight);
+    }
+    setVH();
+    window.addEventListener("resize", setVH);
+    window.addEventListener("orientationchange", setVH);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", setVH);
+      window.visualViewport.addEventListener("scroll", setVH);
     }
 
     // Open modal when triggered
