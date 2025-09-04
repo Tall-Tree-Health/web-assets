@@ -192,9 +192,14 @@
     // Adjust modal height dynamically using visualViewport API (iOS Safari/Chrome fix)
     if (window.visualViewport) {
       function adjustModalHeight() {
-        const h =
-          window.visualViewport.height + window.visualViewport.offsetTop;
-        modal.style.height = h + "px";
+        // Only apply on mobile widths
+        if (window.innerWidth <= 767) {
+          const h =
+            window.visualViewport.height + window.visualViewport.offsetTop;
+          modal.style.height = h + "px";
+        } else {
+          modal.style.height = ""; // reset, let desktop CSS handle it
+        }
       }
       adjustModalHeight(); // run once
       window.visualViewport.addEventListener("resize", adjustModalHeight);
